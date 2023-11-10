@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NLP Chatbot</title>
+    <style>
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .chatbox {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            height: 300px;
+            overflow-y: scroll;
+        }
+        .user-msg {
+            margin-bottom: 10px;
+        }
+        .bot-msg {
+            margin-bottom: 10px;
+            text-align: right;
+        }
+        .user-input {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>NLP Chatbot</h1>
+        <div class="chatbox" id="chatbox"></div>
+        <input type="text" class="user-input" id="user-input" placeholder="Enter your message..." />
+        <button class="submit-btn" onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var userMessage = document.getElementById('user-input').value;
+            appendMessage('user', userMessage);
+            document.getElementById('user-input').value = '';
+            fetch('/get_response', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'user_input=' + userMessage
+            })
+            .then(response => response.text())
+            .then(data => {
+                appendMessage('bot', data);
+            });
+        }
+
+        function appendMessage(sender, message) {
+            var chatbox = document.getElementById('chatbox');
+            var newMessage = document.createElement('div');
+            newMessage.classList.add(sender + '-msg');
+            newMessage.textContent = message;
+            chatbox.appendChild(newMessage);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
